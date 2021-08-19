@@ -1,0 +1,17 @@
+{
+  "name": "acompanha_acoes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paulo-Marcos/acompanhar_acoes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Paulo-Marcos/acompanhar_acoes/issues"
+  },
+  "homepage": "https://github.com/Paulo-Marcos/acompanhar_acoes#readme"
+}
