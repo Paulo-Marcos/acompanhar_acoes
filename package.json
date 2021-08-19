@@ -1,9 +1,12 @@
 {
   "name": "acompanha_acoes",
   "version": "1.0.0",
-  "description": "",
+  "description": "API para fornecer informações/histórico de ações.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node dist/main/api",
+    "build": "rimraf dist && tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Paulo-Marcos/acompanhar_acoes.git"
@@ -13,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/Paulo-Marcos/acompanhar_acoes/issues"
   },
-  "homepage": "https://github.com/Paulo-Marcos/acompanhar_acoes#readme"
+  "homepage": "https://github.com/Paulo-Marcos/acompanhar_acoes#readme",
+  "devDependencies": {
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^16.6.2",
+    "typescript": "^4.3.5"
+  }
 }
