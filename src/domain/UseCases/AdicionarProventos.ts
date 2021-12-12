@@ -1,11 +1,11 @@
-import { SalvarProventos } from "@/domain/contracts/repositories/Proventos"
+import { RepoSalvarProventos } from "@/domain/contracts/repositories/Proventos"
 import { Provento } from "@/domain/Models/Proventos"
 
 export class AdicionarProventos {
 
-  RepoProventos: SalvarProventos
+  RepoProventos: RepoSalvarProventos
 
-  constructor(RepoProventos: SalvarProventos) {
+  constructor(RepoProventos: RepoSalvarProventos) {
     this.RepoProventos = RepoProventos
   }
 

@@ -1,11 +1,11 @@
-import { SalvarProventos } from "@/domain/contracts/repositories/Proventos"
+import { RepoSalvarProventos } from "@/domain/contracts/repositories/Proventos"
 import { Provento } from "@/domain/Models/Proventos"
-import { AdicionarProventos } from "@/domain/UseCases/CadastrarProventos"
+import { AdicionarProventos } from "@/domain/UseCases/AdicionarProventos"
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('Cadastrar Proventos', () => {
 
-  let RepoProventos: MockProxy<SalvarProventos>
+  let RepoProventos: MockProxy<RepoSalvarProventos>
   let proventos: Provento
   let arrayProventos: Provento[]
 
