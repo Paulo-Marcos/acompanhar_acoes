@@ -1,6 +1,6 @@
 import { RepoConsultarProventos } from "@/domain/contracts/repositories/Proventos"
 import { Provento } from "@/domain/Models/Proventos"
-import { ConsultarProventos } from "@/domain/UseCases/ConsultarProventos"
+import { ConsultarProventos } from "@/domain/UseCases/Proventos/ConsultarProventos"
 import { mock, MockProxy } from 'jest-mock-extended'
 
 

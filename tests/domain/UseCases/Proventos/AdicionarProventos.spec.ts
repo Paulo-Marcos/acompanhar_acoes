@@ -1,6 +1,6 @@
 import { RepoSalvarProventos } from "@/domain/contracts/repositories/Proventos"
 import { Provento } from "@/domain/Models/Proventos"
-import { AdicionarProventos } from "@/domain/UseCases/AdicionarProventos"
+import { AdicionarProventos } from "@/domain/UseCases/Proventos/AdicionarProventos"
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('Cadastrar Proventos', () => {
