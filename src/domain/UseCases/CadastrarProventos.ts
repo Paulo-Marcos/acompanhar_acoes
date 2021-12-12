@@ -1,5 +1,5 @@
-import { SalvarProventos } from "../contracts/repositories/Proventos"
-import { Proventos } from "../Models/Proventos"
+import { SalvarProventos } from "@/domain/contracts/repositories/Proventos"
+import { Proventos } from "@/domain/Models/Proventos"
 
 export class AdicionarProventos {
 
