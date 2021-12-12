@@ -1,5 +1,5 @@
 import { SalvarProventos } from "@/domain/contracts/repositories/Proventos"
-import { Proventos } from "@/domain/Models/Proventos"
+import { Provento } from "@/domain/Models/Proventos"
 
 export class AdicionarProventos {
 
@@ -9,7 +9,7 @@ export class AdicionarProventos {
     this.RepoProventos = RepoProventos
   }
 
-  async executar(proventos: Proventos[]) {
+  async executar(proventos: Provento[]) {
     await this.RepoProventos.salvar(proventos)
   }
 }

@@ -1,4 +1,4 @@
-export type Proventos = {
+export type Provento = {
   ativo: string,
   tipoProvento: string,
   dataPagamento: Date,
@@ -6,11 +6,17 @@ export type Proventos = {
   valorPago: number
 }
 
-export class ProventosPagos {
+export class ProventosRecebidos {
 
-  proventos: Proventos[]
+  private proventos: Provento[];
 
-  constructor(proventos: Proventos[]) {
-    this.proventos = proventos
+  constructor(readonly provento: Provento[]) {
+    this.proventos = provento
+    this.getProventos()
   }
+
+  getProventos(): Provento[] {
+    return this.proventos
+  }
+
 }

@@ -1,9 +1,9 @@
-import { ProventosPagos } from "@/domain/Models/Proventos"
+import { Provento, ProventosRecebidos } from "@/domain/Models/Proventos"
 
 
 describe('Proventos', () => {
 
-  const proventos = {
+  const provento: Provento = {
     ativo: "ativo_qualquer",
     tipoProvento: "tipo_qualquer",
     dataPagamento: new Date(),
@@ -11,10 +11,11 @@ describe('Proventos', () => {
     valorPago: Math.random()
   }
 
-  const arrayProventos = [proventos, proventos]
+  const arrayProventos = [provento, provento]
 
   it('Deverá ser criado com os proventos informados', () => {
-    const sut = new ProventosPagos(arrayProventos)
-    expect(sut.proventos).toEqual(arrayProventos)
+    const sut = new ProventosRecebidos(arrayProventos)
+    const proventos = sut.getProventos()
+    expect(proventos).toEqual(arrayProventos)
   })
 })
