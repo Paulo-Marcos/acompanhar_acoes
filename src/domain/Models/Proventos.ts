@@ -6,17 +6,17 @@ export type Provento = {
   valorPago: number
 }
 
-export class ProventosRecebidos {
+// export class ProventosRecebidos {
 
-  private proventos: Provento[];
+//   private proventos: Provento[];
 
-  constructor(readonly provento: Provento[]) {
-    this.proventos = provento
-    this.getProventos()
-  }
+//   constructor(readonly provento: Provento[]) {
+//     this.proventos = provento
+//     this.getProventos()
+//   }
 
-  getProventos(): Provento[] {
-    return this.proventos
-  }
+//   getProventos(): Provento[] {
+//     return this.proventos
+//   }
 
-}
+// }
