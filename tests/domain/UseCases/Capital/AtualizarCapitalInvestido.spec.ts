@@ -1,24 +1,44 @@
 import Chance from 'chance'
 import { mock, MockProxy } from 'jest-mock-extended'
 
+const chance = new Chance()
+
 export interface RepoAtualizarCapital {
-  atualizar: (entrada: AtualizarCapital.Entrada) => Promise<AtualizarCapital.Saida>
+  atualizar: (entrada: AtualizarCapital.movimentosCapital) => Promise<AtualizarCapital.undefined>
+  consultar: (entrada: AtualizarCapital.idUsuario) => Promise<AtualizarCapital.saldoCapital>
 }
 
 namespace AtualizarCapital {
-  export type Entrada = movimentoCapital[]
-  export type Saida = undefined
+  export type movimentosCapital = MovimentoCapital[]
+  export type undefined = undefined
+  export type idUsuario = number
+  export type saldoCapital = number
 }
 
 class AtualizarCapital {
   constructor(private repoCapital: RepoAtualizarCapital) { }
 
-  async executar(movimentoCapital: movimentoCapital[]) {
-    await this.repoCapital.atualizar(movimentoCapital)
+  async executar(parametrosCapital: ParametrosCapital) {
+    const saldoConta = await this.repoCapital.consultar(parametrosCapital.idUsuario)
+    const movimentosCapital = parametrosCapital.movimentosCapital
+
+    const saldoAtual = movimentosCapital.reduce((saldoAtual, movimento) => {
+      return saldoAtual += movimento.valorRecurso
+    }, saldoConta)
+
+    if (saldoAtual < 0) {
+      throw new Error('Saque maior que o saldo da conta')
+    }
+    await this.repoCapital.atualizar(movimentosCapital)
   }
 }
 
-export type movimentoCapital = {
+export type ParametrosCapital = {
+  movimentosCapital: MovimentoCapital[],
+  idUsuario: number
+}
+
+export type MovimentoCapital = {
   valorRecurso: number,
   dataMovimento: Date,
   tipoMovimento: string,
@@ -28,20 +48,36 @@ export type movimentoCapital = {
 describe('Atualizar Capital Investido', () => {
 
   let repoCapital: MockProxy<RepoAtualizarCapital>
-  // let proventos: Provento
-  // let arrayProventos: Provento[]
+  const gerarValoresMovimento = (): { valorRecurso: number, dataMovimento: Date, tipoMovimento: string } => {
+    const valorRecurso = chance.floating({ min: -1000000, max: 1000000 })
+    const dataMovimento = chance.date()
+    const tipoMovimento = valorRecurso > 0 ? 'Aporte' : 'Saque'
+    return { valorRecurso, dataMovimento, tipoMovimento }
+  }
+  let idUsuario: number
+  let quantidadeItensMovimento: number
+  let contador: number = 0
+  let movimentosCapital: MovimentoCapital[] = []
+  let saldoGerado: number = 0
 
   beforeAll(() => {
-    // proventos = {
-    //   ativo: "ativo_qualquer",
-    //   tipoProvento: "tipo_qualquer",
-    //   dataPagamento: new Date(),
-    //   quantidade: Math.random(),
-    //   valorPago: Math.random()
-    // }
-    // arrayProventos = [proventos, proventos]
     repoCapital = mock()
-    // repoCapital.atualizar.mockResolvedValue(Promise.resolve(arrayProventos))
+    idUsuario = chance.integer({ min: 1 })
+    quantidadeItensMovimento = chance.integer({ min: 1, max: 10 })
+
+    for (contador === 0; contador < quantidadeItensMovimento; contador++) {
+      const valoresMovimento = gerarValoresMovimento()
+      saldoGerado += Math.abs(valoresMovimento.valorRecurso)
+      let movimentoCapital = {
+        valorRecurso: valoresMovimento.valorRecurso,
+        dataMovimento: valoresMovimento.dataMovimento,
+        tipoMovimento: valoresMovimento.tipoMovimento,
+        idUsuario: idUsuario
+      }
+      movimentosCapital.push(movimentoCapital)
+    }
+
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(saldoGerado))
   })
 
   afterEach(() => {
@@ -49,31 +85,32 @@ describe('Atualizar Capital Investido', () => {
   })
 
   it('Deverá atualizar o capital investido', async () => {
-    const chance = new Chance()
-    const valorRecurso = chance.floating({ min: -1000000, max: 1000000 })
-    const movimentoCapital = {
-      valorRecurso: valorRecurso,
-      dataMovimento: chance.date(),
-      tipoMovimento: valorRecurso > 0 ? 'Aporte' : 'Saque',
-      idUsuario: chance.integer({ min: 1 })
-    }
-    const arrayMovimentoCapital = [movimentoCapital, movimentoCapital]
-    const sut = new AtualizarCapital(repoCapital)
-    await sut.executar(arrayMovimentoCapital)
 
-    expect(repoCapital.atualizar).toHaveBeenCalledWith(arrayMovimentoCapital)
+    const parametrosCapital = { movimentosCapital, idUsuario }
+    const sut = new AtualizarCapital(repoCapital)
+    await sut.executar(parametrosCapital)
+
+    expect(repoCapital.atualizar).toHaveBeenCalledWith(movimentosCapital)
     expect(repoCapital.atualizar).toHaveBeenCalledTimes(1)
   })
 
-  // it('Deverá retornar vazio quando não houver provento', async () => {
-  //   const idUsuario = Math.random() * 1000
-  //   const sut = new ConsultarProventos(RepoProventos)
-  //   const proventosVazio: Provento[] = []
-  //   RepoProventos.consultar.mockResolvedValue(Promise.resolve(proventosVazio))
-  //   const proventos = await sut.executar(idUsuario)
+  it('Deverá sacar no máximo o valor investido.', async () => {
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
 
-  //   expect(RepoProventos.consultar).toHaveBeenCalledWith(idUsuario)
-  //   expect(RepoProventos.consultar).toHaveBeenCalledTimes(1)
-  //   expect(proventos).toHaveLength(0)
-  // })
+    const valoresMovimento = gerarValoresMovimento()
+    const movimentoCapital = {
+      valorRecurso: -saldoGerado + 1,
+      dataMovimento: valoresMovimento.dataMovimento,
+      tipoMovimento: 'Saque',
+      idUsuario: idUsuario
+    }
+
+    movimentosCapital.push(movimentoCapital)
+
+    const parametrosCapital = { movimentosCapital, idUsuario }
+    const sut = new AtualizarCapital(repoCapital)
+    const promise = sut.executar(parametrosCapital)
+
+    await expect(promise).rejects.toThrow(new Error('Saque maior que o saldo da conta'))
+  })
 })
