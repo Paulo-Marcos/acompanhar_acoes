@@ -55,7 +55,7 @@ describe('Atualizar Capital Investido', () => {
     expect(repoCapital.atualizar).toHaveBeenCalledTimes(1)
   })
 
-  it('Deverá sacar no máximo o valor investido.', async () => {
+  it('Deverá retornar erro se o valor do saque deixar a conta negativa.', async () => {
     repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
 
     const valoresMovimento = gerarValoresMovimento()
