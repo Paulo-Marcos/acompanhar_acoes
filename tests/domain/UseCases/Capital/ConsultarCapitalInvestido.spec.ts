@@ -1,15 +1,10 @@
 import { RepoCapitalInvestido } from '@/domain/contracts/repositories/CapitalInvestido'
-import { MovimentoCapital } from '@/domain/Models/CapitalInvestido'
-import { AtualizarCapital } from '@/domain/UseCases/Capital/AtualizarCapitalInvestido'
+import { CapitalInvestido, MovimentoCapital } from '@/domain/Models/CapitalInvestido'
+import { ConsultarCapital } from '@/domain/UseCases/Capital/ConsultarCapitalInvesitdo'
 import Chance from 'chance'
 import { mock, MockProxy } from 'jest-mock-extended'
 
 const chance = new Chance()
-
-export class ConsultarCapital {
-  constructor(private repoCapital: RepoCapitalInvestido) { }
-}
-
 
 describe('Atualizar Capital Investido', () => {
 
@@ -24,7 +19,6 @@ describe('Atualizar Capital Investido', () => {
   let quantidadeItensMovimento: number
   let contador: number = 0
   let movimentosCapital: MovimentoCapital[] = []
-  let saldoGerado: number = 0
 
   beforeAll(() => {
     repoCapital = mock()
@@ -33,7 +27,6 @@ describe('Atualizar Capital Investido', () => {
 
     for (contador === 0; contador < quantidadeItensMovimento; contador++) {
       const valoresMovimento = gerarValoresMovimento()
-      saldoGerado += Math.abs(valoresMovimento.valorRecurso)
       let movimentoCapital = {
         valorRecurso: valoresMovimento.valorRecurso,
         dataMovimento: valoresMovimento.dataMovimento,
@@ -43,7 +36,7 @@ describe('Atualizar Capital Investido', () => {
       movimentosCapital.push(movimentoCapital)
     }
 
-    repoCapital.consultar.mockResolvedValue(Promise.resolve(saldoGerado))
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(movimentosCapital))
   })
 
   afterEach(() => {
@@ -52,30 +45,39 @@ describe('Atualizar Capital Investido', () => {
 
   it('Deverá chamar consulta no repositório uma vez, com o ID do usuário', async () => {
 
-    // const sut = new AtualizarCapital(repoCapital)
-    // await sut.executar(idUsuario)
+    const sut = new ConsultarCapital(repoCapital)
+    await sut.executar(idUsuario)
 
-    // expect(repoCapital.consultar).toHaveBeenCalledWith(idUsuario)
-    // expect(repoCapital.consultar).toHaveBeenCalledTimes(1)
+    expect(repoCapital.consultar).toHaveBeenCalledWith(idUsuario)
+    expect(repoCapital.consultar).toHaveBeenCalledTimes(1)
   })
 
-  // it('Deverá retornar erro se o valor do saque deixar a conta negativa.', async () => {
-  //   repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
+  it('Deverá lançar um erro se a repositório der erro', async () => {
+    repoCapital.consultar.mockRejectedValueOnce(new Error('erro_consulta'))
 
-  //   const valoresMovimento = gerarValoresMovimento()
-  //   const movimentoCapital = {
-  //     valorRecurso: -saldoGerado + 1,
-  //     dataMovimento: valoresMovimento.dataMovimento,
-  //     tipoMovimento: 'Saque',
-  //     idUsuario: idUsuario
-  //   }
+    const sut = new ConsultarCapital(repoCapital)
+    const promise = sut.executar(idUsuario)
 
-  //   movimentosCapital.push(movimentoCapital)
+    await expect(promise).rejects.toThrow()
+  })
 
-  //   const parametrosCapital = { movimentosCapital, idUsuario }
-  //   const sut = new AtualizarCapital(repoCapital)
-  //   const promise = sut.executar(parametrosCapital)
+  it('Deverá lançar um erro do tipo não há movimento se o retorno for vazio', async () => {
+    const movimentoVazio: MovimentoCapital[] = []
+    repoCapital.consultar.mockResolvedValueOnce(Promise.resolve(movimentoVazio))
 
-  //   await expect(promise).rejects.toThrow(new Error('Saque maior que o saldo da conta'))
-  // })
+    const sut = new ConsultarCapital(repoCapital)
+    const promise = sut.executar(idUsuario)
+
+    await expect(promise).rejects.toThrow(new Error('Não há movimentos'))
+  })
+
+  it('Deverá gerar uma instância do CapitalInvestido', async () => {
+
+    const sut = new ConsultarCapital(repoCapital)
+    const capitalInvestido = await sut.executar(idUsuario)
+
+    expect(capitalInvestido).toBeInstanceOf(CapitalInvestido)
+    expect(capitalInvestido.movimentosCapital).toEqual(movimentosCapital)
+
+  })
 })
