@@ -6,6 +6,11 @@ import { mock, MockProxy } from 'jest-mock-extended'
 
 const chance = new Chance()
 
+export class ConsultarCapital {
+  constructor(private repoCapital: RepoCapitalInvestido) { }
+}
+
+
 describe('Atualizar Capital Investido', () => {
 
   let repoCapital: MockProxy<RepoCapitalInvestido>
@@ -45,33 +50,32 @@ describe('Atualizar Capital Investido', () => {
     repoCapital.atualizar.mockClear()
   })
 
-  it('Deverá atualizar o capital investido', async () => {
+  it('Deverá chamar consulta no repositório uma vez, com o ID do usuário', async () => {
 
-    const parametrosCapital = { movimentosCapital, idUsuario }
-    const sut = new AtualizarCapital(repoCapital)
-    await sut.executar(parametrosCapital)
+    // const sut = new AtualizarCapital(repoCapital)
+    // await sut.executar(idUsuario)
 
-    expect(repoCapital.atualizar).toHaveBeenCalledWith(movimentosCapital)
-    expect(repoCapital.atualizar).toHaveBeenCalledTimes(1)
+    // expect(repoCapital.consultar).toHaveBeenCalledWith(idUsuario)
+    // expect(repoCapital.consultar).toHaveBeenCalledTimes(1)
   })
 
-  it('Deverá retornar erro se o valor do saque deixar a conta negativa.', async () => {
-    repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
+  // it('Deverá retornar erro se o valor do saque deixar a conta negativa.', async () => {
+  //   repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
 
-    const valoresMovimento = gerarValoresMovimento()
-    const movimentoCapital = {
-      valorRecurso: -saldoGerado + 1,
-      dataMovimento: valoresMovimento.dataMovimento,
-      tipoMovimento: 'Saque',
-      idUsuario: idUsuario
-    }
+  //   const valoresMovimento = gerarValoresMovimento()
+  //   const movimentoCapital = {
+  //     valorRecurso: -saldoGerado + 1,
+  //     dataMovimento: valoresMovimento.dataMovimento,
+  //     tipoMovimento: 'Saque',
+  //     idUsuario: idUsuario
+  //   }
 
-    movimentosCapital.push(movimentoCapital)
+  //   movimentosCapital.push(movimentoCapital)
 
-    const parametrosCapital = { movimentosCapital, idUsuario }
-    const sut = new AtualizarCapital(repoCapital)
-    const promise = sut.executar(parametrosCapital)
+  //   const parametrosCapital = { movimentosCapital, idUsuario }
+  //   const sut = new AtualizarCapital(repoCapital)
+  //   const promise = sut.executar(parametrosCapital)
 
-    await expect(promise).rejects.toThrow(new Error('Saque maior que o saldo da conta'))
-  })
+  //   await expect(promise).rejects.toThrow(new Error('Saque maior que o saldo da conta'))
+  // })
 })

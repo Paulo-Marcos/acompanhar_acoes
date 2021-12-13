@@ -1,9 +1,9 @@
-import { RepoAtualizarCapital } from "@/domain/contracts/repositories/CapitalInvestido"
+import { RepoCapitalInvestido } from "@/domain/contracts/repositories/CapitalInvestido"
 import { MovimentoCapital } from "@/domain/Models/CapitalInvestido"
 
 
 export class AtualizarCapital {
-  constructor(private repoCapital: RepoAtualizarCapital) { }
+  constructor(private repoCapital: RepoCapitalInvestido) { }
 
   async executar(parametrosCapital: ParametrosCapital) {
     const saldoConta = await this.repoCapital.consultar(parametrosCapital.idUsuario)

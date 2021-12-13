@@ -1,11 +1,11 @@
 import { MovimentoCapital } from "@/domain/Models/CapitalInvestido"
 
-export interface RepoAtualizarCapital {
-  atualizar: (entrada: AtualizarCapital.movimentosCapital) => Promise<AtualizarCapital.undefined>
-  consultar: (entrada: AtualizarCapital.idUsuario) => Promise<AtualizarCapital.saldoCapital>
+export interface RepoCapitalInvestido {
+  atualizar: (entrada: CapitalInvestido.movimentosCapital) => Promise<CapitalInvestido.undefined>
+  consultar: (entrada: CapitalInvestido.idUsuario) => Promise<CapitalInvestido.saldoCapital>
 }
 
-namespace AtualizarCapital {
+namespace CapitalInvestido {
   export type movimentosCapital = MovimentoCapital[]
   export type undefined = undefined
   export type idUsuario = number
