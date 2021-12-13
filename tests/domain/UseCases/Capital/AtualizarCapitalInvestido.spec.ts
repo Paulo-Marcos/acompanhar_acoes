@@ -38,7 +38,7 @@ describe('Atualizar Capital Investido', () => {
       movimentosCapital.push(movimentoCapital)
     }
 
-    repoCapital.consultar.mockResolvedValue(Promise.resolve(saldoGerado))
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(movimentosCapital))
   })
 
   afterEach(() => {
@@ -46,6 +46,12 @@ describe('Atualizar Capital Investido', () => {
   })
 
   it('Deverá atualizar o capital investido', async () => {
+    const movimentoPositivo: MovimentoCapital[] = movimentosCapital.map(movimento => {
+      movimento.valorRecurso = Math.abs(movimento.valorRecurso)
+      movimento.tipoMovimento = 'Aporte'
+      return movimento
+    })
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(movimentoPositivo))
 
     const parametrosCapital = { movimentosCapital, idUsuario }
     const sut = new AtualizarCapital(repoCapital)
@@ -56,16 +62,16 @@ describe('Atualizar Capital Investido', () => {
   })
 
   it('Deverá retornar erro se o valor do saque deixar a conta negativa.', async () => {
-    repoCapital.consultar.mockResolvedValue(Promise.resolve(0))
+    const movimentoVazio: MovimentoCapital[] = []
+    repoCapital.consultar.mockResolvedValue(Promise.resolve(movimentoVazio))
 
     const valoresMovimento = gerarValoresMovimento()
     const movimentoCapital = {
-      valorRecurso: -saldoGerado + 1,
+      valorRecurso: -(saldoGerado + 1),
       dataMovimento: valoresMovimento.dataMovimento,
       tipoMovimento: 'Saque',
       idUsuario: idUsuario
     }
-
     movimentosCapital.push(movimentoCapital)
 
     const parametrosCapital = { movimentosCapital, idUsuario }

@@ -1,17 +1,18 @@
 import { RepoCapitalInvestido } from "@/domain/contracts/repositories/CapitalInvestido"
-import { MovimentoCapital } from "@/domain/Models/CapitalInvestido"
+import { CapitalInvestido, MovimentoCapital } from "@/domain/Models/CapitalInvestido"
 
 
 export class AtualizarCapital {
   constructor(private repoCapital: RepoCapitalInvestido) { }
 
   async executar(parametrosCapital: ParametrosCapital) {
-    const saldoConta = await this.repoCapital.consultar(parametrosCapital.idUsuario)
-    const movimentosCapital = parametrosCapital.movimentosCapital
+    const movimentosCapital = await this.repoCapital.consultar(parametrosCapital.idUsuario)
+    const capitalInvestido = new CapitalInvestido(movimentosCapital)
+    const novosMovimentosCapital = parametrosCapital.movimentosCapital
 
-    const saldoAtual = movimentosCapital.reduce((saldoAtual, movimento) => {
+    const saldoAtual = novosMovimentosCapital.reduce((saldoAtual, movimento) => {
       return saldoAtual += movimento.valorRecurso
-    }, saldoConta)
+    }, capitalInvestido.gerarSaldoCapitalInvestido())
 
     if (saldoAtual < 0) {
       throw new Error('Saque maior que o saldo da conta')

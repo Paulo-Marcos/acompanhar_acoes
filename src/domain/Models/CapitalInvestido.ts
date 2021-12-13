@@ -7,15 +7,19 @@ export type MovimentoCapital = {
 
 export class CapitalInvestido {
 
-  private capitalInvestidoAtual: number = 0
+  private saldoCapitalInvestido: number = 0
 
   constructor(readonly movimentosCapital: MovimentoCapital[]) {
-    this.definirCapitalInvestidoAtual()
+    this.definirSaldoCapitalInvestido()
   }
 
-  definirCapitalInvestidoAtual(): void {
+  definirSaldoCapitalInvestido(): void {
     this.movimentosCapital.forEach(movimento => {
-      this.capitalInvestidoAtual += movimento.valorRecurso
+      this.saldoCapitalInvestido += movimento.valorRecurso
     });
+  }
+
+  gerarSaldoCapitalInvestido() {
+    return this.saldoCapitalInvestido
   }
 }
